@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 
 void main() {
   runApp(const MyApp());
@@ -34,11 +37,22 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
-  void _incrementCounter() {
+  void _incrementCounter() async {
     print("Hello");
-    setState(() {
-      _counter++;
-    });
+
+    var request = http.Request('GET', Uri.parse('http://192.168.91.249:8088/'));
+
+    http.StreamedResponse response = await request.send();
+
+    if (response.statusCode == 200) {
+      List<dynamic> user = jsonDecode(await response.stream.bytesToString());
+    } else {
+      print(response.reasonPhrase);
+    }
+
+    // setState(() {
+    //   _counter++;
+    // });
   }
 
   @override

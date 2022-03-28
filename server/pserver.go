@@ -3,58 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
-
-func getData() {
-	url := "https://api-cloud.ru/api/transportMos.php?type=pass&licenseSeries=%D0%91%D0%91&token=&regNumber=%D1%83348%D0%B0%D0%B248"
-	method := "GET"
-
-	client := &http.Client{}
-	req, err := http.NewRequest(method, url, nil)
-
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	res, err := client.Do(req)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	defer res.Body.Close()
-
-	body, err := ioutil.ReadAll(res.Body)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	fmt.Println(string(body))
-}
-
-func Index(w http.ResponseWriter, r *http.Request) {
-	defer func() {
-		if r := recover(); r != nil {
-			fmt.Fprintln(w, "Error!")
-		}
-	}()
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "*")
-
-	json.NewEncoder(w).Encode(map[string]string{"Base": "1", "BaseNeed": "2"})
-}
-
-func loggingMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// Do stuff here
-		log.Println(r.RequestURI)
-		// Call the next handler, which can be another middleware in the chain, or the final handler.
-		next.ServeHTTP(w, r)
-	})
-}
 
 var jstr = `
 {
@@ -126,12 +79,41 @@ type J struct {
 	Inquiry map[string]interface{}
 }
 
-func main() {
-	//router := mux.NewRouter()
-	//router.HandleFunc("/", Index)
-	//
-	//router.Use(loggingMiddleware)
-	//log.Fatal(http.ListenAndServe(":8088", router))
+func getData() {
+	url := "https://api-cloud.ru/api/transportMos.php?type=pass&licenseSeries=%D0%91%D0%91&token=&regNumber=%D1%83348%D0%B0%D0%B248"
+	method := "GET"
+
+	client := &http.Client{}
+	req, err := http.NewRequest(method, url, nil)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	res, err := client.Do(req)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	defer res.Body.Close()
+
+	body, err := ioutil.ReadAll(res.Body)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(string(body))
+}
+
+func Index(w http.ResponseWriter, r *http.Request) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintln(w, "Error!")
+		}
+	}()
+
+	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 
 	var result J
 
@@ -142,4 +124,24 @@ func main() {
 	}
 
 	fmt.Println("Id :", result.stat)
+
+	json.NewEncoder(w).Encode(result.List)
+}
+
+func loggingMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// Do stuff here
+		log.Println(r.RequestURI)
+		// Call the next handler, which can be another middleware in the chain, or the final handler.
+		next.ServeHTTP(w, r)
+	})
+}
+
+func main() {
+	router := mux.NewRouter()
+	router.HandleFunc("/", Index)
+
+	router.Use(loggingMiddleware)
+	log.Fatal(http.ListenAndServe(":8088", router))
+
 }

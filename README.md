@@ -2,6 +2,8 @@
 
 Проверить пропуск
 
+![Screenshot](https://github.com/sizedru/demo_modile_app/blob/main/icons/img.png?raw=true)
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
