@@ -80,7 +80,7 @@ type J struct {
 }
 
 func getData() {
-	url := "https://api-cloud.ru/api/transportMos.php?type=pass&licenseSeries=%D0%91%D0%91&token=&regNumber=%D1%83348%D0%B0%D0%B248"
+	url := "https://api-cloud.ru/api/transportMos.php?type=pass&licenseSeries=%D0%91%D0%91&token=2159537639e5e8aa94fa83092785972b&regNumber=%D1%83348%D0%B0%D0%B248"
 	method := "GET"
 
 	client := &http.Client{}
