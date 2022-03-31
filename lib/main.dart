@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Проверить пропуск',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: const MyHomePage(title: 'Проверка пропусков'),
       debugShowCheckedModeBanner: false,
@@ -165,7 +165,7 @@ class _MyHomePageState extends State<MyHomePage> {
     entitlements.forEach((entitlement) {
       print(entitlement["passInfo"].toString());
       var str = entitlement["zone"] + " " + entitlement["passInfo"] + " " + entitlement["period"];
-      var cl = Colors.blue[i];
+      var cl = Colors.green[i];
       if (entitlement["status"] == "EXPIRED") {
         cl = Colors.red[i];
       }
